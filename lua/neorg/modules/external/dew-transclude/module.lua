@@ -29,7 +29,7 @@ module.private = {
               goto continue
             end
 
-            local content = get_module("external.neorg-dew").read_file(file_name)
+            local content = modules.get_module("external.neorg-dew").read_file(file_name)
 
             if content then
               local inside_block = false
