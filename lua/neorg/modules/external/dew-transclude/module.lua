@@ -5,7 +5,6 @@ local api = vim.api
 local autocmd = api.nvim_create_autocmd
 
 local module = modules.create "external.dew-transclude"
-local neorg_dew = require("neorg.core.modules").get_module("external.neorg-dew")
 
 module.load = function()
   module.private.set_autocmd()
@@ -30,7 +29,7 @@ module.private = {
               goto continue
             end
 
-            local content = neorg_dew.read_file(file_name)
+            local content = get_module("external.neorg-dew").read_file(file_name)
 
             if content then
               local inside_block = false
@@ -38,7 +37,7 @@ module.private = {
               for _, line2 in ipairs(content) do
                 local is_match_title = line2:match "^%*%s"
                 if inside_block then
-                  local new_line = neorg_dew.level_up(line2, 2)
+                  local new_line = modules.get_module("external.neorg-dew").level_up(line2, 2)
                   table.insert(block_lines, new_line)
                 end
 
