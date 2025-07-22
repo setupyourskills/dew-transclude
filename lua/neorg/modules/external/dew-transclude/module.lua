@@ -1,11 +1,11 @@
 local neorg = require "neorg.core"
 local modules = neorg.modules
-local neorg_dew = require("neorg.core.modules").get_module("external.neorg-dew")
 
 local api = vim.api
 local autocmd = api.nvim_create_autocmd
 
 local module = modules.create "external.dew-transclude"
+local neorg_dew = require("neorg.core.modules").get_module("external.neorg-dew")
 
 module.load = function()
   module.private.set_autocmd()
