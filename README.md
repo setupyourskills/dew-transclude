@@ -7,7 +7,7 @@ This module is part of the [Neorg Dew](https://github.com/setupyourskills/neorg-
 ## Features
 
 - Parses inline transclusion syntax in `.norg` files.
-- Automatically replaces transclusion directives with extracted content blocks.
+- Automatically insert the extracted content blocks directly below the transclusion directives.
 - Supports block-level slicing of content based on title markers.
 - Lightweight and easily customizable.
 
