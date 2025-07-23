@@ -36,7 +36,11 @@ Make sure all of them are loaded through Neorg’s module system in your config:
 
 ```lua
 ["external.neorg-dew"] = {},
-["external.dew-transclude"] = {},
+["external.dew-transclude"] = {
+    config = {
+        block_end_marker = "===" -- Marks the end of the level 1 heading block for content extraction
+    }
+},
 ```
 
 ## Usage
