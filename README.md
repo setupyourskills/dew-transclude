@@ -8,7 +8,7 @@ This module is part of the [Neorg Dew](https://github.com/setupyourskills/neorg-
 
 - Parses inline transclusion syntax in `.norg` files.
 - Automatically insert the extracted content blocks directly below the transclusion directives.
-- Supports block-level slicing of content based on title markers.
+- Automatically delete the embedded content if the leading `!` before the link has been removed.
 - Lightweight and easily customizable.
 
 ## Installation
@@ -60,6 +60,8 @@ Each directive will be annotated in-place with the number of inserted lines, e.g
 ```lua
 !{path_to_the_note}[title of the note]:> 7
 ```
+
+4. Remove the embedded content if the leading `!` preceding the link is no longer present.
 
 ## Collaboration and Compatibility
 
