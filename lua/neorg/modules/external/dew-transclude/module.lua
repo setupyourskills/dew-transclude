@@ -6,15 +6,47 @@ local autocmd = api.nvim_create_autocmd
 
 local module = modules.create "external.dew-transclude"
 
+module.setup = function()
+  return {
+    requires = {
+      "core.neorgcmd",
+    },
+  }
+end
+
 module.load = function()
+  module.required["core.neorgcmd"].add_commands_from_table {
+    dew_transclude = {
+      args = 1,
+      subcommands = {
+        enable = { args = 0, name = "dew-transclude.enable" },
+        disable = { args = 0, name = "dew-transclude.disable" },
+        refresh = { args = 0, name = "dew-transclude.refresh" },
+        toggle = { args = 0, name = "dew-transclude.toggle" },
+      },
+    },
+  }
+
   module.private.set_autocmd()
 end
 
 module.config.public = {
-  block_end_marker = "==="
+  block_end_marker = "===",
 }
 
 module.private = {
+  enable = function()
+  end,
+
+  disable = function()
+  end,
+
+  toggle = function()
+  end,
+
+  refresh = function()
+  end,
+
   set_autocmd = function()
     autocmd({ "BufEnter", "CursorMoved" }, {
       callback = function()
@@ -78,6 +110,27 @@ module.private = {
       end,
     })
   end,
+}
+
+module.on_event = function(event)
+  if event.split_type[2] == "dew-transclude.enable" then
+    module.private.enable()
+  elseif event.split_type[2] == "dew-transclude.disable" then
+    module.private.disable()
+  elseif event.split_type[2] == "dew-transclude.refresh" then
+    module.private.refresh()
+  elseif event.split_type[2] == "dew-transclude.toggle" then
+    module.private.toggle()
+  end
+end
+
+module.events.subscribed = {
+  ["core.neorgcmd"] = {
+    ["dew-transclude.enable"] = true,
+    ["dew-transclude.disable"] = true,
+    ["dew-transclude.refresh"] = true,
+    ["dew-transclude.toggle"] = true,
+  },
 }
 
 return module
