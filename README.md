@@ -38,8 +38,8 @@ Make sure all of them are loaded through Neorg’s module system in your config:
 ["external.neorg-dew"] = {},
 ["external.dew-transclude"] = {
     config = {
-        block_end_marker = "===" -- Marks the end of the level 1 heading block for content extraction
-    }
+        block_end_marker = "===", -- Marks the end of the level 1 heading block for content extraction
+    },
 },
 ```
 
@@ -51,6 +51,8 @@ Simply prefix the internal link with a `!` to embed the `.norg` file note in the
 !{path_to_the_note}[title of the note]
 ```
 
+Delete the `!`, and the inserted content will be automatically removed.
+
 ## How it works
 
 1. Detects all transclusion directives matching the pattern `!{path_to_the_note}[title of the note]`
@@ -61,7 +63,7 @@ Simply prefix the internal link with a `!` to embed the `.norg` file note in the
 
 Each directive will be annotated in-place with the number of inserted lines, e.g.:
 
-```lua
+```
 !{path_to_the_note}[title of the note]:> 7
 ```
 
