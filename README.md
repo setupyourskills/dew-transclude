@@ -53,6 +53,15 @@ Simply prefix the internal link with a `!` to embed the `.norg` file note in the
 
 Delete the `!`, and the inserted content will be automatically removed.
 
+You can `enable`, `disable`, `refresh` or `toggle` the transclusion using the following Neorg commands:
+
+```
+:Neorg dew_transclude enable
+:Neorg dew_transclude disable
+:Neorg dew_transclude refresh
+:Neorg dew_transclude toggle
+```
+
 ## How it works
 
 1. Detects all transclusion directives matching the pattern `!{path_to_the_note}[title of the note]`
