@@ -41,7 +41,7 @@ module.private = {
     if line:find("{", 1, true) and not line:find("!", 1, true) then
       local new_line = line:gsub("%{", "!{")
 
-      vim.api.nvim_buf_set_lines(0, row_position - 1, row_position, false, { new_line })
+      api.nvim_buf_set_lines(0, row_position - 1, row_position, false, { new_line })
     end
   end,
 
@@ -51,7 +51,7 @@ module.private = {
     if line:find("!{", 1, true) then
       local new_line = line:gsub("!%{", "{")
 
-      vim.api.nvim_buf_set_lines(0, row_position - 1, row_position, false, { new_line })
+      api.nvim_buf_set_lines(0, row_position - 1, row_position, false, { new_line })
     end
   end,
 
@@ -76,8 +76,8 @@ module.private = {
   delete_inserted_lines = function(line, position, line_number)
     local new_line = line:gsub("%]:>%s%d+$", "]")
 
-    vim.api.nvim_buf_set_lines(0, position - 1, position, false, { new_line })
-    vim.api.nvim_buf_set_lines(0, position, position + line_number, false, {})
+    api.nvim_buf_set_lines(0, position - 1, position, false, { new_line })
+    api.nvim_buf_set_lines(0, position, position + line_number, false, {})
   end,
 
   is_enabled = function(line)
@@ -131,17 +131,17 @@ module.private = {
         end
       end
 
-      vim.api.nvim_buf_set_lines(0, position, position + 1, false, block_lines)
+      api.nvim_buf_set_lines(0, position, position + 1, false, block_lines)
     end
 
-    vim.api.nvim_buf_set_lines(0, position - 1, position, false, { line .. ":> " .. #block_lines - 1 })
+    api.nvim_buf_set_lines(0, position - 1, position, false, { line .. ":> " .. #block_lines - 1 })
   end,
 
   set_autocmd = function()
     autocmd({ "BufEnter", "CursorMoved" }, {
       callback = function()
         if vim.bo.filetype == "norg" then
-          local lines = vim.api.nvim_buf_get_lines(0, 0, -1, false)
+          local lines = api.nvim_buf_get_lines(0, 0, -1, false)
 
           for i = #lines, 1, -1 do
             local line = lines[i]
