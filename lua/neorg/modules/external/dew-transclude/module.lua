@@ -126,6 +126,7 @@ module.private = {
           end
           inside_block = true
         elseif line2:match(module.config.public.block_end_marker) then
+          table.remove(block_lines, #block_lines)
           break
         end
       end
