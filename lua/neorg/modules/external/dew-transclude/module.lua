@@ -131,10 +131,10 @@ module.private = {
         end
       end
 
-      api.nvim_buf_set_lines(0, position, position + 1, false, block_lines)
+      api.nvim_buf_set_lines(0, position, position, false, block_lines)
     end
 
-    api.nvim_buf_set_lines(0, position - 1, position, false, { line .. ":> " .. #block_lines - 1 })
+    api.nvim_buf_set_lines(0, position - 1, position, false, { line .. ":> " .. #block_lines })
   end,
 
   set_autocmd = function()
