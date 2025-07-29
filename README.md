@@ -39,6 +39,7 @@ Make sure all of them are loaded through Neorg’s module system in your config:
 ["external.dew-transclude"] = {
     config = {
         block_end_marker = "===", -- Marks the end of the level 1 heading block for content extraction
+        no_title = true, -- Set to `true` to disable the title extraction
     },
 },
 ```
