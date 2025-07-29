@@ -32,6 +32,7 @@ end
 
 module.config.public = {
   block_end_marker = "===",
+  no_title = true,
 }
 
 module.private = {
@@ -115,10 +116,6 @@ module.private = {
 
       for _, line2 in ipairs(content) do
         local is_match_title = line2:match "^%*%s"
-        if inside_block then
-          local new_line = modules.get_module("external.neorg-dew").level_up(line2)
-          table.insert(block_lines, new_line)
-        end
 
         if is_match_title then
           if inside_block then
@@ -128,6 +125,11 @@ module.private = {
         elseif line2:match(module.config.public.block_end_marker) then
           table.remove(block_lines, #block_lines)
           break
+        end
+
+        if inside_block and not (is_match_title and module.config.public.no_title) then
+          local new_line = modules.get_module("external.neorg-dew").level_up(line2)
+          table.insert(block_lines, new_line)
         end
       end
 
