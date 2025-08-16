@@ -26,6 +26,7 @@ This module is part of the [Neorg Dew](https://github.com/setupyourskills/neorg-
   ft = "norg",
   dependencies = {
     "setupyourskills/neorg-dew",
+    "setupyourskills/dew-highlight", -- Optional for colorization
   },
 }
 ```
@@ -40,9 +41,20 @@ Make sure all of them are loaded through Neorg’s module system in your config:
     config = {
         block_end_marker = "===", -- Marks the end of the level 1 heading block for content extraction
         no_title = true, -- Set to `true` to disable the title extraction
+        colorify = false, -- Set to `true` to colorize the extracted content see `colors`
     },
 },
 ```
+
+### Colors
+
+The `colorify` option colorizes extracted content.
+
+It relies on the `Dew Highlights` submodule to colorize embedded content.
+
+See the [Dew Highlights](https://github.com/setupyourskills/dew-highlights) submodule for configuration details.
+
+**Note:** You must add the `dew-highlight` dependency to your Neorg configuration.
 
 ## Usage
 
