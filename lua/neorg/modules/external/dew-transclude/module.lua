@@ -38,41 +38,23 @@ module.config.public = {
 }
 
 module.private = {
-  enable = function()
+  toggle = function(state)
     local row_position, line = modules.get_module("external.neorg-dew").get_line_at_cursor_position()
+    local is_inserted = module.private.is_inserted(line)
 
-    if line:find("{", 1, true) and not line:find("!", 1, true) then
-      local new_line = line:gsub("%{", "!{")
+    local new_line
 
+    if not state or (is_inserted and state == "disable") or (not is_inserted and state == "enable") then
+      new_line = is_inserted and line:gsub("!%{", "{") or line:gsub("%{", "!{")
       api.nvim_buf_set_lines(0, row_position - 1, row_position, false, { new_line })
-    end
-  end,
-
-  disable = function()
-    local row_position, line = modules.get_module("external.neorg-dew").get_line_at_cursor_position()
-
-    if line:find("!{", 1, true) then
-      local new_line = line:gsub("!%{", "{")
-
-      api.nvim_buf_set_lines(0, row_position - 1, row_position, false, { new_line })
-    end
-  end,
-
-  toggle = function()
-    local _, line = modules.get_module("external.neorg-dew").get_line_at_cursor_position()
-
-    if module.private.is_enabled(line) then
-      module.private.disable()
-    else
-      module.private.enable()
     end
   end,
 
   refresh = function()
-    module.private.disable()
+    module.private.toggle("disable")
 
     vim.defer_fn(function()
-      module.private.enable()
+      module.private.toggle("enable")
     end, 100)
   end,
 
@@ -86,7 +68,7 @@ module.private = {
     end
   end,
 
-  is_enabled = function(line)
+  get_note_name_to_insert = function(line)
     return string.match(line, "!%{:(.-):%}%[.-%]")
   end,
 
@@ -161,10 +143,10 @@ module.private = {
           for i = #lines, 1, -1 do
             local line = lines[i]
 
-            local path = module.private.is_enabled(line)
+            local note_name = module.private.get_note_name_to_insert(line)
 
-            if path then
-              local nb_of_lines = module.private.embed_note(line, i, path)
+            if note_name then
+              local nb_of_lines = module.private.embed_note(line, i, note_name)
 
               if module.config.public.colorify then
                 module.private.colorify(i, nb_of_lines)
@@ -181,9 +163,9 @@ module.private = {
 
 module.on_event = function(event)
   if event.split_type[2] == "dew-transclude.enable" then
-    module.private.enable()
+    module.private.toggle("enable")
   elseif event.split_type[2] == "dew-transclude.disable" then
-    module.private.disable()
+    module.private.toggle("disable")
   elseif event.split_type[2] == "dew-transclude.refresh" then
     module.private.refresh()
   elseif event.split_type[2] == "dew-transclude.toggle" then
