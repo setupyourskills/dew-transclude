@@ -27,14 +27,19 @@ module.load = function()
     },
   }
 
+  module.config.private.name_space = api.nvim_create_namespace "dew-transclude"
+
   module.private.set_autocmd()
 end
 
 module.config.public = {
   block_end_marker = "===",
   no_title = true,
-  colorify = true,
-  colorify_options = { bg = "#2A3230", fg = "#D2DAD7" },
+  colorify = false,
+}
+
+module.config.private = {
+  name_space = nil
 }
 
 module.private = {
@@ -51,10 +56,10 @@ module.private = {
   end,
 
   refresh = function()
-    module.private.toggle("disable")
+    module.private.toggle "disable"
 
     vim.defer_fn(function()
-      module.private.toggle("enable")
+      module.private.toggle "enable"
     end, 100)
   end,
 
@@ -121,19 +126,6 @@ module.private = {
     return #block_lines
   end,
 
-  colorify = function(start, nb)
-    api.nvim_set_hl(0, "dewTransclude", module.config.public.colorify_options)
-
-    for lnum = start, start + nb - 1 do
-      api.nvim_buf_set_extmark(0, api.nvim_create_namespace "dew-transclude", lnum, 0, {
-        end_row = lnum,
-        end_col = #vim.api.nvim_buf_get_lines(0, lnum, lnum + 1, false)[1] or "",
-        hl_group = "dewTransclude",
-        hl_eol = true,
-      })
-    end
-  end,
-
   set_autocmd = function()
     autocmd({ "BufEnter", "TextChanged", "TextChangedI" }, {
       callback = function()
@@ -149,7 +141,13 @@ module.private = {
               local nb_of_lines = module.private.embed_note(line, i, note_name)
 
               if module.config.public.colorify then
-                module.private.colorify(i, nb_of_lines)
+                require("neorg.core.modules").get_module("external.neorg-dew").colorify(
+                  0,
+                  module.config.private.name_space,
+                  "dewTransclude",
+                  i,
+                  nb_of_lines
+                )
               end
             else
               module.private.delete_inserted_lines(line, i)
@@ -163,9 +161,9 @@ module.private = {
 
 module.on_event = function(event)
   if event.split_type[2] == "dew-transclude.enable" then
-    module.private.toggle("enable")
+    module.private.toggle "enable"
   elseif event.split_type[2] == "dew-transclude.disable" then
-    module.private.toggle("disable")
+    module.private.toggle "disable"
   elseif event.split_type[2] == "dew-transclude.refresh" then
     module.private.refresh()
   elseif event.split_type[2] == "dew-transclude.toggle" then
