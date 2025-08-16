@@ -76,11 +76,14 @@ module.private = {
     end, 100)
   end,
 
-  delete_inserted_lines = function(line, position, line_number)
-    local new_line = line:gsub("%]:>%s%d+$", "]")
+  delete_inserted_lines = function(line, position)
+    if module.private.is_inserted(line) then
+      local get_number_of_inserted_lines = module.private.get_number_of_inserted_lines(line)
+      local new_line = line:gsub("%]:>%s%d+$", "]")
 
-    api.nvim_buf_set_lines(0, position - 1, position, false, { new_line })
-    api.nvim_buf_set_lines(0, position, position + line_number, false, {})
+      api.nvim_buf_set_lines(0, position - 1, position, false, { new_line })
+      api.nvim_buf_set_lines(0, position, position + get_number_of_inserted_lines, false, {})
+    end
   end,
 
   is_enabled = function(line)
@@ -95,14 +98,6 @@ module.private = {
 
   get_number_of_inserted_lines = function(line)
     return string.match(line, "%{:.-:%}%[.-%]:>%s(%d+)")
-  end,
-
-  transclusion_disabled = function(line, position)
-    if module.private.is_inserted(line) then
-      local get_number_of_inserted_lines = module.private.get_number_of_inserted_lines(line)
-
-      module.private.delete_inserted_lines(line, position, get_number_of_inserted_lines)
-    end
   end,
 
   embed_note = function(line, position, path)
@@ -175,7 +170,7 @@ module.private = {
                 module.private.colorify(i, nb_of_lines)
               end
             else
-              module.private.transclusion_disabled(line, i)
+              module.private.delete_inserted_lines(line, i)
             end
           end
         end
