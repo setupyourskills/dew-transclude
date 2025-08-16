@@ -98,12 +98,10 @@ module.private = {
   end,
 
   transclusion_disabled = function(line, position)
-    local disable_and_get_number = string.match(line, "%{:.-:%}%[.-%]:>%s(%d+)")
+    if module.private.is_inserted(line) then
+      local get_number_of_inserted_lines = module.private.get_number_of_inserted_lines(line)
 
-    if disable_and_get_number and not string.match(line, "!%{") then
-      module.private.delete_inserted_lines(line, position, disable_and_get_number)
-
-      return true
+      module.private.delete_inserted_lines(line, position, get_number_of_inserted_lines)
     end
   end,
 
