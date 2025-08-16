@@ -33,6 +33,8 @@ end
 module.config.public = {
   block_end_marker = "===",
   no_title = true,
+  colorify = true,
+  colorify_options = { bg = "#2A3230", fg = "#D2DAD7" },
 }
 
 module.private = {
@@ -91,6 +93,10 @@ module.private = {
     end
   end,
 
+  get_number_of_inserted_lines = function(line)
+    return string.match(line, "%{:.-:%}%[.-%]:>%s(%d+)")
+  end,
+
   transclusion_disabled = function(line, position)
     local disable_and_get_number = string.match(line, "%{:.-:%}%[.-%]:>%s(%d+)")
 
@@ -106,7 +112,7 @@ module.private = {
     local block_lines = {}
 
     if module.private.is_inserted(line) then
-      return
+      return module.private.get_number_of_inserted_lines(line)
     end
 
     local content = modules.get_module("external.neorg-dew").read_file(file_name)
@@ -136,10 +142,25 @@ module.private = {
     end
 
     api.nvim_buf_set_lines(0, position - 1, position, false, { line .. ":> " .. #block_lines })
+
+    return #block_lines
+  end,
+
+  colorify = function(start, nb)
+    api.nvim_set_hl(0, "dewTransclude", module.config.public.colorify_options)
+
+    for lnum = start, start + nb - 1 do
+      api.nvim_buf_set_extmark(0, api.nvim_create_namespace "dew-transclude", lnum, 0, {
+        end_row = lnum,
+        end_col = #vim.api.nvim_buf_get_lines(0, lnum, lnum + 1, false)[1] or "",
+        hl_group = "dewTransclude",
+        hl_eol = true,
+      })
+    end
   end,
 
   set_autocmd = function()
-    autocmd({ "BufEnter", "CursorMoved" }, {
+    autocmd({ "BufEnter", "TextChanged", "TextChangedI" }, {
       callback = function()
         if vim.bo.filetype == "norg" then
           local lines = api.nvim_buf_get_lines(0, 0, -1, false)
@@ -150,7 +171,11 @@ module.private = {
             local path = module.private.is_enabled(line)
 
             if path then
-              module.private.embed_note(line, i, path)
+              local nb_of_lines = module.private.embed_note(line, i, path)
+
+              if module.config.public.colorify then
+                module.private.colorify(i, nb_of_lines)
+              end
             else
               module.private.transclusion_disabled(line, i)
             end
