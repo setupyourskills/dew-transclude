@@ -145,7 +145,7 @@ module.private = {
                   0,
                   module.config.private.name_space,
                   "dewTransclude",
-                  i,
+                  i + 1,
                   nb_of_lines
                 )
               end
